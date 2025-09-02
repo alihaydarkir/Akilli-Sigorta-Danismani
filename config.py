@@ -1,18 +1,20 @@
-# config.py - Geliştirilmiş kategori tespiti
+# config.py - Akıllı Sigorta Danışmanı Konfigürasyonu
 """
-🔧 Akıllı Sigorta Danışmanı - Geliştirilmiş Konfigürasyon
-Kategori tespiti ve kelime eşleştirme iyileştirmeleri
+🏢 Akıllı Sigorta Danışmanı - Merkezi Konfigürasyon
+100+ belge için optimize edilmiş RAG sistemi
 """
 
 import streamlit as st
 
-# 🎯 MODEL AYARLARI
+# 🎯 MODEL AYARLARI - 100+ veri için optimize
 MODEL_CONFIG = {
     'model_name': 'sentence-transformers/distiluse-base-multilingual-cased',
     'model_size': '480MB',
-    'collection_name': 'sigorta_bilgi_bankasi_v1',
+    'collection_name': 'sigorta_bilgi_bankasi_v2',
     'embedding_dimension': 512,
-    'max_tokens': 512
+    'max_tokens': 512,
+    'batch_size': 16,
+    'processing_chunks': 10
 }
 
 # 🎨 UI AYARLARI
@@ -24,92 +26,80 @@ UI_CONFIG = {
     'secondary_color': '#2e5c8a'
 }
 
-# 🔍 ARAMA AYARLARI - Daha agresif eşikler
+# 🔍 ARAMA AYARLARI - 100 veri için optimize
 SEARCH_CONFIG = {
-    'max_results': 8,
+    'max_results': 15,
     'min_chunk_words': 2,
-    'max_chunks': 4,
-    'cache_size': 100,
-    'default_threshold': 0.03  # Daha düşük eşik
+    'max_chunks': 6,
+    'cache_size': 200,
+    'default_threshold': 0.02,
+    'enable_multi_stage': True,
+    'rerank_top_k': 5,
+    'semantic_boost': 1.2
 }
 
-# 📊 KATEGORİ EŞİKLERİ - Daha düşük, daha hassas
+# 📊 KATEGORİ EŞİKLERİ - 100 veri için hassas
 CATEGORY_THRESHOLDS = {
-    'kasko': 0.02,              # Çok hassas
-    'saglik': 0.02,             # Çok hassas
-    'konut': 0.02,              # Çok hassas  
-    'trafik': 0.03,             # Hassas
-    'mevzuat': 0.04,            # Normal
-    'genel': 0.05,              # En gevşek
-    'default': 0.03
+    'kasko': 0.015,
+    'saglik': 0.015,
+    'konut': 0.015,
+    'trafik': 0.02,
+    'mevzuat': 0.03,
+    'genel': 0.04,
+    'default': 0.02
 }
 
-# 🎯 ENHANCED KATEGORİ KEYWORDS - Çok daha kapsamlı
+# 🎯 ENHANCED KATEGORİ KEYWORDS - 100 veri için kapsamlı
 CATEGORY_KEYWORDS = {
     'kasko': [
-        # Temel terimler
-        'kasko', 'araç', 'otomobil', 'araba', 'motor', 'vehicle', 'car',
-        # Hasar türleri
+        'kasko', 'araç', 'otomobil', 'araba', 'motor', 'vehicle', 'car', 'oto',
         'hasar', 'kaza', 'çarpma', 'çarpışma', 'collision', 'accident', 'damage',
         'deprem', 'earthquake', 'sel', 'flood', 'su baskını', 'doğal afet',
-        # Sigorta terimleri
-        'oto', 'automotive', 'araç sigortası', 'kasko sigortası'
+        'yangın', 'fire', 'cam', 'glass', 'hırsızlık', 'theft',
+        'franchise', 'muafiyet', 'deductible', 'excess'
     ],
     
     'saglik': [
-        # Temel terimler
-        'sağlık', 'health', 'medical', 'tedavi', 'treatment', 'tıbbi',
-        # Yerler
-        'hastane', 'hospital', 'klinik', 'clinic', 'doktor', 'doctor',
+        'sağlık', 'health', 'medical', 'tıbbi', 'tedavi', 'treatment',
+        'hastane', 'hospital', 'klinik', 'clinic', 'doktor', 'doctor', 'hekim',
         'yurtdışı', 'abroad', 'foreign', 'overseas', 'dış ülke',
-        # İşlemler
         'ameliyat', 'surgery', 'operasyon', 'müdahale', 'therapy',
-        # Sağlık özel
-        'sağlık sigortası', 'health insurance', 'tıbbi sigorta'
+        'acil', 'emergency', 'yaş', 'age', 'önceki hastalık', 'preexisting'
     ],
     
     'konut': [
-        # Temel terimler
         'konut', 'ev', 'house', 'home', 'mesken', 'dwelling', 'residence',
-        # Hasar türleri
-        'yangın', 'fire', 'ateş', 'yanma', 'burning',
+        'yangın', 'fire', 'ateş', 'yanma', 'burning', 'combustion',
         'hırsızlık', 'theft', 'burglary', 'çalma', 'robbery', 'stealing',
-        'su kaçağı', 'water damage', 'leak', 'kaçak',
-        # Konut özel
-        'konut sigortası', 'ev sigortası', 'home insurance', 'dwelling insurance'
+        'su', 'water', 'kaçak', 'leak', 'su hasarı', 'water damage',
+        'deprem', 'earthquake', 'doğal afet', 'natural disaster',
+        'eşya', 'furniture', 'mobilya', 'goods', 'belongings'
     ],
     
     'trafik': [
-        # Temel terimler  
         'trafik', 'traffic', 'zorunlu', 'compulsory', 'mandatory', 'mecburi',
-        # Mali sorumluluk
-        'sorumluluk', 'liability', 'responsibility', 'obligation',
-        # Özel durumlar
-        'temerrüt', 'faiz', 'interest', 'gecikme', 'delay',
-        'yeşil kart', 'green card', 'yurtdışı', 'abroad',
-        # Trafik özel
-        'trafik sigortası', 'zorunlu sigorta', 'traffic insurance'
+        'sorumluluk', 'liability', 'responsibility', 'üçüncü şahıs', 'third party',
+        'temerrüt', 'faiz', 'interest', 'gecikme', 'delay', 'late payment',
+        'fesih', 'termination', 'iptal', 'cancellation',
+        'yeşil kart', 'green card', 'yurtdışı', 'international'
     ],
     
     'mevzuat': [
-        # Kurumlar
         'sbm', 'sigortacılık denetleme', 'insurance supervision',
-        # Belgeler
-        'genelge', 'circular', 'tebliğ', 'communique', 'yönetmelik', 'regulation',
-        'kanun', 'law', 'mevzuat', 'legislation',
-        # Hukuki
+        'genelge', 'circular', 'tebliğ', 'communique', 'announcement',
+        'yönetmelik', 'regulation', 'kanun', 'law', 'mevzuat', 'legislation',
         'madde', 'article', 'fıkra', 'paragraph', 'bent', 'clause'
     ],
     
     'genel': [
-        # Genel terimler (en sonda kalacak)
         'sigorta', 'insurance', 'poliçe', 'policy', 'prim', 'premium',
         'teminat', 'coverage', 'kapsam', 'scope', 'şart', 'condition',
-        'cayma', 'withdrawal', 'iptal', 'cancellation'
+        'cayma', 'withdrawal', 'iptal', 'cancellation', 'yenileme', 'renewal',
+        'franchise', 'muafiyet', 'deductible', 'excess', 'kesinti', 'indirim'
     ]
 }
 
-# 🚀 MEGA KELİME HARİTASI - Çok daha kapsamlı
+# 🚀 MEGA KELİME HARİTASI - 100 veri için genişletilmiş
 MEGA_KELIME_HARITASI = {
     # KASKO CLUSTER
     'kasko': ['araç sigortası', 'oto sigortası', 'vehicle insurance', 'car insurance', 'otomobil sigortası'],
@@ -154,10 +144,10 @@ MEGA_KELIME_HARITASI = {
     'gecerli': ['valid', 'effective', 'applicable', 'current', 'active']
 }
 
-# 🔍 ÖRNEK SORULAR
+# 🔍 ÖRNEK SORULAR - 100 veri için
 SAMPLE_QUESTIONS = [
     "Kasko poliçemde deprem hasarı karşılanıyor mu?",
-    "Sağlık sigortam yurt dışında geçerli mi?", 
+    "Sağlık sigortam yurt dışında geçerli mi?",
     "Trafik sigortası temerrüt faizi oranı nedir?",
     "Konut sigortası yangın teminatı kapsamı nedir?",
     "SBM genelgelerine göre prim ödeme sürem ne kadar?",
@@ -175,7 +165,7 @@ DATA_CONFIG = {
     'encoding': 'utf-8'
 }
 
-# 🎨 CSS STYLES - Gelişmiş
+# 🎨 CSS STYLES - Enhanced
 CSS_STYLES = """
 <style>
 .ultra-header {
@@ -230,7 +220,6 @@ CSS_STYLES = """
     padding: 1.2rem;
     margin: 1rem 0;
     box-shadow: 0 4px 8px rgba(31, 78, 121, 0.15);
-    position: relative;
 }
 
 .police-ref strong {
@@ -256,7 +245,7 @@ CSS_STYLES = """
 """
 
 def get_config():
-    """🔧 Tüm konfigürasyonu döndür"""
+    """🔧 Tüm konfigürasyonu döndür - 100 veri optimize"""
     return {
         'model': MODEL_CONFIG,
         'ui': UI_CONFIG,

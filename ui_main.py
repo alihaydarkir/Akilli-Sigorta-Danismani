@@ -1,8 +1,5 @@
-# ui_main.py - Sigorta kullanıcı arayüzü
-"""
-🎨 Sigorta Sistemi - Ana UI
-Streamlit arayüzü, sigorta danışmanlığı etkileşimi
-"""
+# ui_main.py - DÜZELTME: UI Dashboard imports düzeltildi
+
 from typing import List, Dict, Optional
 import streamlit as st
 import random
@@ -11,84 +8,137 @@ from config import get_config
 from model_core import SigortaModelCore
 
 class SigortaUserInterface:
-    """🎨 Sigorta Kullanıcı Arayüzü"""
+    """🎨 100 veri için optimize edilmiş UI"""
     
     def __init__(self):
         self.config = get_config()
         self.model_core = None
     
     def setup_page(self):
-        """📱 Sayfa ayarları"""
+        """📱 Sayfa setup"""
         st.set_page_config(
             page_title=self.config['ui']['page_title'],
             page_icon=self.config['ui']['page_icon'],
             layout=self.config['ui']['layout']
         )
-        
-        # CSS yükle
         st.markdown(self.config['css'], unsafe_allow_html=True)
     
     def render_header(self):
-        """🎯 Başlık render"""
+        """🎯 Header render"""
         st.markdown("""
         <div class="ultra-header">
-            <h1>🏢 Akıllı Sigorta Danışmanı v1.0</h1>
-            <p><strong>RAG Tabanlı • Poliçe Bilgileri • Mevzuat Rehberi</strong></p>
+            <h1>🏢 Akıllı Sigorta Danışmanı v2.0</h1>
+            <p><strong>100+ Belge • RAG Tabanlı • Gelişmiş Analiz</strong></p>
         </div>
         """, unsafe_allow_html=True)
     
-    def render_sidebar(self):
-        """📋 Sidebar render"""
+    def render_enhanced_metrics(self):
+        """📊 100 veri için gelişmiş metrikler"""
+        if hasattr(st.session_state, 'sigorta_sistem'):
+            stats = st.session_state.sigorta_sistem.get_sistem_stats()
+            
+            # Ana metrikler
+            col1, col2, col3, col4, col5 = st.columns(5)
+            
+            with col1:
+                doc_count = stats['database_stats']['dokuman_sayisi']
+                delta_val = f"+{doc_count-15}" if doc_count > 15 else None
+                st.metric("📚 Belgeler", doc_count, delta=delta_val)
+            
+            with col2:
+                st.metric("🎯 Başarı", stats['performance_stats']['basari_orani'])
+            
+            with col3:
+                st.metric("⚡ Hız", stats['performance_stats']['ortalama_yanit'])
+            
+            with col4:
+                st.metric("💾 Cache", len(stats['performance_stats']) if 'cache_size' in stats['performance_stats'] else 0)
+            
+            with col5:
+                health = "Excellent" if doc_count >= 100 else "Good" if doc_count >= 50 else "Fair"
+                st.metric("💚 Sistem", health)
+            
+            # Kategori dağılımı göster
+            if stats['database_stats']['kategori_dagilimi']:
+                self._render_category_chart(stats['database_stats']['kategori_dagilimi'])
+    
+    def _render_category_chart(self, category_dist: Dict):
+        """📊 Kategori dağılım grafiği"""
+        try:
+            # Plotly kullanmadan basit görüntü
+            st.markdown("### 📊 Kategori Dağılımı")
+            
+            total = sum(category_dist.values())
+            for kategori, sayi in category_dist.items():
+                percentage = (sayi / total) * 100
+                st.write(f"• **{kategori.replace('_', ' ').title()}:** {sayi} belge (%{percentage:.1f})")
+            
+        except Exception as e:
+            st.warning(f"Grafik yüklenemedi: {str(e)}")
+    
+    def render_enhanced_sidebar(self):
+        """📋 100 veri için gelişmiş sidebar"""
         with st.sidebar:
-            st.markdown("## 🛡️ Sigorta Hub")
+            st.markdown("## 🛡️ Sigorta Hub v2.0")
             st.markdown("---")
             
-            # Hızlı sorular
+            # Kategori bazlı hızlı sorular
             st.markdown("### ⚡ Hızlı Sorular")
-            samples = self.config['samples']
             
-            for soru in samples:
-                if st.button(soru[:35] + "...", key=f"sidebar_{soru}", use_container_width=True):
-                    st.session_state.ana_soru = soru
+            # Kategorili butonlar
+            if st.button("🚗 Kasko Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Kasko poliçemde deprem hasarı karşılanıyor mu?"
+            
+            if st.button("🏥 Sağlık Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Sağlık sigortam yurt dışında geçerli mi?"
+            
+            if st.button("🏠 Konut Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Konut sigortası yangın teminatı kapsamı nedir?"
+            
+            if st.button("🚦 Trafik Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Trafik sigortası temerrüt faizi oranı nedir?"
+            
+            if st.button("🛡️ Genel Sorular", use_container_width=True):
+                st.session_state.ana_soru = "Franchise tutarı nasıl hesaplanır?"
             
             st.markdown("---")
             
             # Sistem durumu
             st.markdown("### ⚙️ Sistem Durumu")
             
-            if hasattr(st.session_state, 'sigorta_sistem') and st.session_state.sigorta_sistem:
+            if hasattr(st.session_state, 'sigorta_sistem'):
                 stats = st.session_state.sigorta_sistem.get_sistem_stats()
+                doc_count = stats['database_stats']['dokuman_sayisi']
                 
-                st.success("✅ Sistem Aktif")
-                st.info(f"🧠 {stats['model_bilgisi']['name'][:20]}...")
-                st.info(f"💾 {stats['model_bilgisi']['size']}")
-                st.info(f"📊 {stats['database_stats']['dokuman_sayisi']} belge")
-                
-                # Performance
-                perf = stats['performance_stats']
-                st.metric("📈 Başarı", perf['basari_orani'])
-                st.metric("⚡ Yanıt", perf['ortalama_yanit'])
+                if doc_count >= 100:
+                    st.success(f"✅ {doc_count} belge aktif!")
+                    st.metric("📈 Başarı", stats['performance_stats']['basari_orani'])
+                    st.metric("⚡ Yanıt", stats['performance_stats']['ortalama_yanit'])
+                elif doc_count >= 50:
+                    st.warning(f"⚠️ {doc_count} belge (hedef: 100)")
+                else:
+                    st.error(f"❌ {doc_count} belge - veri eksik")
             else:
-                st.error("❌ Sistem henüz başlatılmadı")
+                st.error("❌ Sistem başlatılmadı")
             
             st.markdown("---")
             
-            # Sigorta kategorileri
-            st.markdown("### 🎯 Sigorta Kategorileri")
-            st.markdown("""
-            • 🚗 **Kasko** - Araç hasarları
-            • 🏥 **Sağlık** - Tedavi kapsamı
-            • 🏠 **Konut** - Ev sigortası
-            • 🚦 **Trafik** - Zorunlu sigorta
-            • 📋 **Mevzuat** - SBM genelgeleri
-            • 🛡️ **Genel** - Sigorta hakları
-            """)
+            # Admin tools
+            st.markdown("### 🔧 Yönetim")
+            
+            if st.button("🗑️ Cache Temizle", use_container_width=True):
+                if hasattr(st.session_state, 'sigorta_sistem'):
+                    st.session_state.sigorta_sistem.clear_cache()
+            
+            if st.button("📊 Stats Sıfırla", use_container_width=True):
+                if hasattr(st.session_state, 'sigorta_sistem'):
+                    st.session_state.sigorta_sistem.reset_stats()
     
     def render_main_interface(self):
         """💬 Ana arayüz"""
         # Sistem başlatma
         if 'sigorta_sistem' not in st.session_state:
-            with st.spinner("🚀 Sigorta danışmanı başlatılıyor..."):
+            with st.spinner("🚀 100+ belge sistemi başlatılıyor..."):
                 st.session_state.sigorta_sistem = SigortaModelCore()
                 st.session_state.sistem_hazir = st.session_state.sigorta_sistem.sistem_baslat()
         
@@ -102,18 +152,15 @@ class SigortaUserInterface:
             """, unsafe_allow_html=True)
             return
         
-        # Başarı mesajı
-        st.markdown('<div class="success-box">✅ <strong>Sigorta danışmanı aktif!</strong> Poliçe ve mevzuat bilgileri için hazır.</div>', unsafe_allow_html=True)
-        
-        # Metrikler
-        self._render_metrics()
+        # Enhanced metrics
+        self.render_enhanced_metrics()
         
         st.markdown("---")
         
-        # Ana soru bölümü
-        st.markdown("## 💬 Sigorta Danışmanlığı")
+        # Ana soru alanı
+        st.markdown("## 💬 100+ Belge Sigorta Danışmanlığı")
         
-        # Soru input
+        # Input
         soru = st.text_input(
             "Sigorta sorunuzu yazın:",
             value=st.session_state.get('ana_soru', ''),
@@ -121,11 +168,11 @@ class SigortaUserInterface:
             key="ana_soru_input"
         )
         
-        # Butonlar
+        # Buttons
         col1, col2, col3 = st.columns([3, 1, 1])
         
         with col1:
-            ara_btn = st.button("🔍 Danışman Analizi", type="primary", use_container_width=True)
+            ara_btn = st.button("🔍 100+ Belge Analizi", type="primary", use_container_width=True)
         
         with col2:
             if st.button("🔄 Temizle", use_container_width=True):
@@ -137,69 +184,41 @@ class SigortaUserInterface:
                 st.session_state.ana_soru = random.choice(self.config['samples'])
                 st.rerun()
         
-        # Sonuçları göster
+        # Query handling
         if ara_btn and soru.strip():
-            self._handle_query(soru)
+            self._handle_enhanced_query(soru)
         elif ara_btn and not soru.strip():
             st.markdown('<div class="warning-box">⚠️ <strong>Lütfen bir sigorta sorusu yazın.</strong></div>', unsafe_allow_html=True)
     
-    def _render_metrics(self):
-        """📊 Metrik kartları"""
-        if hasattr(st.session_state, 'sigorta_sistem'):
-            stats = st.session_state.sigorta_sistem.get_sistem_stats()
-            
-            col1, col2, col3, col4 = st.columns(4)
-            
-            with col1:
-                st.metric("📚 Belgeler", stats['database_stats']['dokuman_sayisi'])
-            
-            with col2:
-                st.metric("🧠 Model", stats['model_bilgisi']['size'])
-            
-            with col3:
-                st.metric("📈 Başarı", stats['performance_stats']['basari_orani'])
-            
-            with col4:
-                st.metric("⚡ Hız", stats['performance_stats']['ortalama_yanit'])
-    
-    def _handle_query(self, soru: str):
-        """🎯 Sorgu işleme"""
-        with st.spinner("🤖 Sigorta uzmanı analiz yapıyor..."):
-            time.sleep(0.3)
+    def _handle_enhanced_query(self, soru: str):
+        """🎯 100 veri için gelişmiş sorgu işleme"""
+        with st.spinner("🤖 100+ belge analiz ediliyor..."):
             result = st.session_state.sigorta_sistem.sorgula(soru)
         
         st.markdown("---")
         
-        # Sonuç durumu
+        # Enhanced result display
         if result['basarili']:
             if result.get('cache_hit'):
-                st.markdown('<div class="info-box">⚡ <strong>Hızlı Yanıt!</strong> Cache\'den getirildi.</div>', unsafe_allow_html=True)
+                st.markdown('<div class="info-box">⚡ <strong>Hızlı Yanıt!</strong> Cache\'den alındı.</div>', unsafe_allow_html=True)
             else:
-                # Acil durum kontrolü
-                emergency_words = ['acil', 'hasar', 'kaza', 'yangın', 'hırsızlık']
-                if any(word in soru.lower() for word in emergency_words):
-                    st.markdown('<div class="emergency-box">🚨 <strong>ACİL DURUM!</strong> Sigorta şirketinizi arayın!</div>', unsafe_allow_html=True)
-                else:
-                    st.markdown('<div class="success-box">✅ <strong>Danışmanlık tamamlandı!</strong></div>', unsafe_allow_html=True)
+                st.markdown('<div class="success-box">✅ <strong>100+ Belge Analizi Tamamlandı!</strong></div>', unsafe_allow_html=True)
         else:
             st.markdown('<div class="warning-box">⚠️ <strong>Spesifik bilgi bulunamadı.</strong> Öneriler sunuluyor.</div>', unsafe_allow_html=True)
         
-        # Ana yanıt
+        # Yanıt göster
         st.markdown(result['yanit'], unsafe_allow_html=True)
         
-        # Analiz detayları
-        self._render_analysis_details(result)
-        
-        # Feedback butonları
-        self._render_feedback_buttons(soru, result)
+        # Enhanced analysis details
+        self._render_enhanced_analysis(result)
     
-    def _render_analysis_details(self, result: Dict):
-        """📊 Analiz detayları"""
+    def _render_enhanced_analysis(self, result: Dict):
+        """📊 100 veri analiz detayları"""
         if not result.get('basarili'):
             return
         
         st.markdown("---")
-        st.markdown("### 📊 Analiz Detayları")
+        st.markdown("### 📊 100+ Belge Analiz Detayları")
         
         col1, col2, col3 = st.columns(3)
         
@@ -207,7 +226,7 @@ class SigortaUserInterface:
             st.markdown(f"""
             <div class="metric-card">
                 <strong>🎯 En İyi Skor:</strong> {result.get('en_iyi_skor', 0):.3f}<br>
-                <strong>📂 Kategori:</strong> {result.get('primary_category', 'N/A').replace('_', ' ').title()}<br>
+                <strong>📂 Kategori:</strong> {result.get('primary_category', 'N/A').title()}<br>
                 <strong>🎚️ Eşik:</strong> {result.get('kullanilan_esik', 0):.3f}
             </div>
             """, unsafe_allow_html=True)
@@ -216,140 +235,397 @@ class SigortaUserInterface:
             st.markdown(f"""
             <div class="metric-card">
                 <strong>📊 Toplam Sonuç:</strong> {result.get('toplam_sonuc', 0)}<br>
-                <strong>⭐ Kaliteli Sonuç:</strong> {result.get('kaliteli_sonuc', 0)}<br>
-                <strong>⚡ Yanıt Süresi:</strong> {result.get('yanit_suresi', 0):.2f}s
+                <strong>⭐ Kaliteli:</strong> {result.get('kaliteli_sonuc', 0)}<br>
+                <strong>⚡ Süre:</strong> {result.get('yanit_suresi', 0):.2f}s
             </div>
             """, unsafe_allow_html=True)
         
         with col3:
-            cache_status = "🟢 Cache Hit" if result.get('cache_hit') else "🔵 Yeni Arama"
+            cache_status = "🟢 Cache Hit" if result.get('cache_hit') else "🔵 Fresh"
             st.markdown(f"""
             <div class="metric-card">
                 <strong>💾 Cache:</strong> {cache_status}<br>
-                <strong>🎯 Sistem:</strong> Sigorta RAG<br>
-                <strong>📋 Mod:</strong> Tek Odak
+                <strong>🎯 Sistem:</strong> 100+ RAG<br>
+                <strong>📋 Mode:</strong> Enhanced
             </div>
             """, unsafe_allow_html=True)
-    
-    def _render_feedback_buttons(self, soru: str, result: Dict):
-        """👍 Feedback butonları"""
-        st.markdown("---")
-        st.markdown("### 💭 Bu yanıt size yardımcı oldu mu?")
-        
-        col1, col2, col3, col4 = st.columns([1, 1, 1, 2])
-        
-        with col1:
-            if st.button("👍 Çok faydalı!", use_container_width=True):
-                st.success("✅ Teşekkürler! Feedback kaydedildi.")
-        
-        with col2:
-            if st.button("👎 Yetersiz", use_container_width=True):
-                st.info("🔍 Feedback kaydedildi. Sistemi geliştirmeye devam edeceğiz.")
-        
-        with col3:
-            if st.button("ℹ️ Daha detay", use_container_width=True):
-                self._show_detailed_info(result)
-        
-        with col4:
-            if st.button("🔄 Farklı soru öner", use_container_width=True):
-                suggested = self._suggest_related_question(soru, result.get('primary_category', ''))
-                st.session_state.ana_soru = suggested
-                st.rerun()
-    
-    def _show_detailed_info(self, result: Dict):
-        """ℹ️ Detaylı bilgi göster"""
-        with st.expander("📊 Detaylı Analiz Bilgileri", expanded=True):
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.markdown("**🔍 Arama Detayları:**")
-                st.write(f"• Kategori: {result.get('primary_category', 'N/A')}")
-                st.write(f"• En iyi skor: {result.get('en_iyi_skor', 0):.3f}")
-                st.write(f"• Kullanılan eşik: {result.get('kullanilan_esik', 0):.3f}")
-                st.write(f"• Toplam sonuç: {result.get('toplam_sonuc', 0)}")
-            
-            with col2:
-                st.markdown("**⚡ Performance:**")
-                st.write(f"• Yanıt süresi: {result.get('yanit_suresi', 0):.2f}s")
-                st.write(f"• Cache hit: {'Evet' if result.get('cache_hit') else 'Hayır'}")
-                st.write(f"• Sistem: Sigorta RAG")
-                st.write(f"• Mode: Tek Odak")
-    
-    def _suggest_related_question(self, original_soru: str, kategori: str) -> str:
-        """💡 İlgili soru öner"""
-        kategori_sorular = {
-            'kasko': [
-                "Kasko sel hasarı nasıl bildirilir?",
-                "Çarpışma sonrası hangi belgeler gerekir?",
-                "Kasko franchise tutarı nasıl hesaplanır?"
-            ],
-            'saglik': [
-                "Sağlık sigortası ameliyat kapsamı nedir?",
-                "Yurtdışı tedavi için hangi belgeler gerekir?",
-                "Sağlık sigortası prim gecikme süresi ne kadar?"
-            ],
-            'konut': [
-                "Konut sigortası hırsızlık teminatı nedir?",
-                "Su kaçağı hasarı nasıl karşılanır?",
-                "Yangın sonrası hangi adımları izlemeliyim?"
-            ],
-            'trafik': [
-                "Trafik sigortası yurtdışı geçerliliği var mı?",
-                "Yeşil kart başvurusu nasıl yapılır?",
-                "Trafik sigortası fesih koşulları neler?"
-            ]
-        }
-        
-        if kategori in kategori_sorular:
-            return random.choice(kategori_sorular[kategori])
-        
-        return random.choice(self.config['samples'])
     
     def render_footer(self):
         """🎓 Footer"""
         st.markdown("---")
         
-        # Final card
+        # Enhanced footer
         st.markdown("""
         <div style="text-align: center; background: linear-gradient(135deg, #1f4e79 0%, #2e5c8a 100%); 
                    padding: 2rem; border-radius: 15px; color: white; margin: 2rem 0;">
-            <h3>🏢 Akıllı Sigorta Danışmanı v1.0</h3>
-            <p><strong>RAG • Poliçe Bilgileri • Mevzuat Rehberi</strong></p>
+            <h3>🏢 Akıllı Sigorta Danışmanı v2.0</h3>
+            <p><strong>100+ Belge • Enhanced RAG • Gelişmiş Analiz</strong></p>
             <div style="margin-top: 1rem;">
-                <span style="margin: 0 1rem;">🎯 RAG Tabanlı</span>
+                <span style="margin: 0 1rem;">🎯 100+ Veri</span>
                 <span style="margin: 0 1rem;">⚡ Hızlı Yanıt</span>
-                <span style="margin: 0 1rem;">🛡️ Güvenilir</span>
-                <span style="margin: 0 1rem;">📊 Doğru</span>
+                <span style="margin: 0 1rem;">🎨 Enhanced UI</span>
+                <span style="margin: 0 1rem;">📊 Analytics</span>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Uyarı
-        st.markdown("""
-        <div style="text-align: center; padding: 1rem; background: rgba(255, 193, 7, 0.1); 
-                   border-radius: 8px; margin: 1rem 0; color: #856404;">
-            <p><strong>⚠️ UYARI:</strong> Bu sistem bilgilendirme amaçlıdır. 
-            Kesin kararlar için <strong>sigorta şirketinize danışın</strong>.</p>
         </div>
         """, unsafe_allow_html=True)
 
 def main():
-    """🎯 Ana uygulama"""
+    """🎯 100 veri ana uygulama"""
     ui = SigortaUserInterface()
-    
-    # Sayfa setup
     ui.setup_page()
-    
-    # Header
     ui.render_header()
-    
-    # Sidebar
-    ui.render_sidebar()
-    
-    # Ana arayüz
+    ui.render_enhanced_sidebar()
     ui.render_main_interface()
+    ui.render_footer()
+
+if __name__ == "__main__":
+    main()# ui_main.py - DÜZELTME: UI Dashboard imports düzeltildi
+
+from typing import List, Dict, Optional
+import streamlit as st
+import random
+import time
+from config import get_config
+from model_core import SigortaModelCore
+
+class SigortaUserInterface:
+    """🎨 100 veri için optimize edilmiş UI"""
     
-    # Footer
+    def __init__(self):
+        self.config = get_config()
+        self.model_core = None
+    
+    def setup_page(self):
+        """📱 Sayfa setup"""
+        st.set_page_config(
+            page_title=self.config['ui']['page_title'],
+            page_icon=self.config['ui']['page_icon'],
+            layout=self.config['ui']['layout']
+        )
+        st.markdown(self.config['css'], unsafe_allow_html=True)
+    
+    def render_header(self):
+        """🎯 Header render"""
+        st.markdown("""
+        <div class="ultra-header">
+            <h1>🏢 Akıllı Sigorta Danışmanı v2.0</h1>
+            <p><strong>100+ Belge • RAG Tabanlı • Gelişmiş Analiz</strong></p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    def render_enhanced_metrics(self):
+        """📊 100 veri için gelişmiş metrikler"""
+        if hasattr(st.session_state, 'sigorta_sistem'):
+            stats = st.session_state.sigorta_sistem.get_sistem_stats()
+            
+            # Ana metrikler
+            col1, col2, col3, col4, col5 = st.columns(5)
+            
+            with col1:
+                doc_count = stats['database_stats']['dokuman_sayisi']
+                delta_val = f"+{doc_count-15}" if doc_count > 15 else None
+                st.metric("📚 Belgeler", doc_count, delta=delta_val)
+            
+            with col2:
+                st.metric("🎯 Başarı", stats['performance_stats']['basari_orani'])
+            
+            with col3:
+                st.metric("⚡ Hız", stats['performance_stats']['ortalama_yanit'])
+            
+            with col4:
+                st.metric("💾 Cache", len(stats['performance_stats']) if 'cache_size' in stats['performance_stats'] else 0)
+            
+            with col5:
+                health = "Excellent" if doc_count >= 100 else "Good" if doc_count >= 50 else "Fair"
+                st.metric("💚 Sistem", health)
+            
+            # Kategori dağılımı göster
+            if stats['database_stats']['kategori_dagilimi']:
+                self._render_category_chart(stats['database_stats']['kategori_dagilimi'])
+    
+    def _render_category_chart(self, category_dist: Dict):
+        """📊 Kategori dağılım grafiği"""
+        try:
+            # Plotly kullanmadan basit görüntü
+            st.markdown("### 📊 Kategori Dağılımı")
+            
+            total = sum(category_dist.values())
+            for kategori, sayi in category_dist.items():
+                percentage = (sayi / total) * 100
+                st.write(f"• **{kategori.replace('_', ' ').title()}:** {sayi} belge (%{percentage:.1f})")
+            
+        except Exception as e:
+            st.warning(f"Grafik yüklenemedi: {str(e)}")
+    
+    def render_enhanced_sidebar(self):
+        """📋 100 veri için gelişmiş sidebar"""
+        with st.sidebar:
+            st.markdown("## 🛡️ Sigorta Hub v2.0")
+            st.markdown("---")
+            
+            # Kategori bazlı hızlı sorular
+            st.markdown("### ⚡ Hızlı Sorular")
+            
+            # Kategorili butonlar
+            if st.button("🚗 Kasko Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Kasko poliçemde deprem hasarı karşılanıyor mu?"
+            
+            if st.button("🏥 Sağlık Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Sağlık sigortam yurt dışında geçerli mi?"
+            
+            if st.button("🏠 Konut Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Konut sigortası yangın teminatı kapsamı nedir?"
+            
+            if st.button("🚦 Trafik Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Trafik sigortası temerrüt faizi oranı nedir?"
+            
+            if st.button("🛡️ Genel Sorular", use_container_width=True):
+                st.session_state.ana_soru = "Franchise tutarı nasıl hesaplanır?"
+            
+            st.markdown("---")
+            
+            # Sistem durumu
+            st.markdown("### ⚙️ Sistem Durumu")
+            
+            if hasattr(st.session_state, 'sigorta_sistem'):
+                stats = st.session_state.sigorta_sistem.get_sistem_stats()
+                doc_count = stats['database_stats']['dokuman_sayisi']
+                
+                if doc_count >= 100:
+                    st.success(f"✅ {doc_count} belge aktif!")
+                    st.metric("📈 Başarı", stats['performance_stats']['basari_orani'])
+                    st.metric("⚡ Yanıt", stats['performance_stats']['ortalama_yanit'])
+                elif doc_count >= 50:
+                    st.warning(f"⚠️ {doc_count} belge (hedef: 100)")
+                else:
+                    st.error(f"❌ {doc_count} belge - veri eksik")
+            else:
+                st.error("❌ Sistem başlatılmadı")
+            
+            st.markdown("---")
+            
+            # Admin tools
+            st.markdown("### 🔧 Yönetim")
+            
+            if st.button("🗑️ Cache Temizle", use_container_width=True):
+                if hasattr(st.session_state, 'sigorta_sistem'):
+                    st.session_state.sigorta_sistem.clear_cache()
+            
+            if st.button("📊 Stats Sıfırla", use_container_width=True):
+                if hasattr(st.session_state, 'sigorta_sistem'):
+                    st.session_state.sigorta_sistem.reset_stats()
+    
+    def render_sidebar(self):
+        """📋 Sidebar render"""
+        with st.sidebar:
+            st.markdown("## 🛡️ Sigorta Hub v2.0")
+            st.markdown("---")
+            
+            # Kategori bazlı hızlı sorular
+            st.markdown("### ⚡ Hızlı Sorular")
+            
+            if st.button("🚗 Kasko Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Kasko poliçemde deprem hasarı karşılanıyor mu?"
+            
+            if st.button("🏥 Sağlık Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Sağlık sigortam yurt dışında geçerli mi?"
+            
+            if st.button("🏠 Konut Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Konut sigortası yangın teminatı kapsamı nedir?"
+            
+            if st.button("🚦 Trafik Soruları", use_container_width=True):
+                st.session_state.ana_soru = "Trafik sigortası temerrüt faizi oranı nedir?"
+            
+            if st.button("🛡️ Genel Sorular", use_container_width=True):
+                st.session_state.ana_soru = "Franchise tutarı nasıl hesaplanır?"
+            
+            st.markdown("---")
+            
+            # Sistem durumu
+            st.markdown("### ⚙️ Sistem Durumu")
+            
+            if hasattr(st.session_state, 'sigorta_sistem'):
+                stats = st.session_state.sigorta_sistem.get_sistem_stats()
+                doc_count = stats['database_stats']['dokuman_sayisi']
+                
+                if doc_count >= 100:
+                    st.success(f"✅ {doc_count} belge aktif!")
+                    st.metric("📈 Başarı", stats['performance_stats']['basari_orani'])
+                    st.metric("⚡ Yanıt", stats['performance_stats']['ortalama_yanit'])
+                elif doc_count >= 50:
+                    st.warning(f"⚠️ {doc_count} belge (hedef: 100)")
+                else:
+                    st.error(f"❌ {doc_count} belge - veri eksik")
+            else:
+                st.error("❌ Sistem başlatılmadı")
+            
+            st.markdown("---")
+            
+            # Admin tools
+            st.markdown("### 🔧 Yönetim")
+            
+            if st.button("🗑️ Cache Temizle", use_container_width=True):
+                if hasattr(st.session_state, 'sigorta_sistem'):
+                    st.session_state.sigorta_sistem.clear_cache()
+            
+            if st.button("📊 Stats Sıfırla", use_container_width=True):
+                if hasattr(st.session_state, 'sigorta_sistem'):
+                    st.session_state.sigorta_sistem.reset_stats()
+    
+    def render_enhanced_sidebar(self):
+        """📋 Enhanced sidebar - alias"""
+        return self.render_sidebar()
+    
+    def _render_metrics(self):
+        """📊 Metrik render - alias"""
+        return self.render_enhanced_metrics()
+    
+    def _handle_query(self, soru: str):
+        """🎯 Query handle - alias"""
+        return self._handle_enhanced_query(soru)
+    
+    def render_main_interface(self):
+        """💬 Ana arayüz"""
+        # Sistem başlatma
+        if 'sigorta_sistem' not in st.session_state:
+            with st.spinner("🚀 100+ belge sistemi başlatılıyor..."):
+                st.session_state.sigorta_sistem = SigortaModelCore()
+                st.session_state.sistem_hazir = st.session_state.sigorta_sistem.sistem_baslat()
+        
+        if not st.session_state.sistem_hazir:
+            st.markdown("""
+            <div class="warning-box">
+                ❌ <strong>Sistem başlatılamadı!</strong><br>
+                • JSON dosyasını kontrol edin<br>
+                • Kütüphaneleri yükleyin: <code>pip install chromadb sentence-transformers</code>
+            </div>
+            """, unsafe_allow_html=True)
+            return
+        
+        # Enhanced metrics
+        self.render_enhanced_metrics()
+        
+        st.markdown("---")
+        
+        # Ana soru alanı
+        st.markdown("## 💬 100+ Belge Sigorta Danışmanlığı")
+        
+        # Input
+        soru = st.text_input(
+            "Sigorta sorunuzu yazın:",
+            value=st.session_state.get('ana_soru', ''),
+            placeholder="Örn: Kasko poliçemde deprem hasarı karşılanıyor mu?",
+            key="ana_soru_input"
+        )
+        
+        # Buttons
+        col1, col2, col3 = st.columns([3, 1, 1])
+        
+        with col1:
+            ara_btn = st.button("🔍 100+ Belge Analizi", type="primary", use_container_width=True)
+        
+        with col2:
+            if st.button("🔄 Temizle", use_container_width=True):
+                st.session_state.ana_soru = ""
+                st.rerun()
+        
+        with col3:
+            if st.button("🎲 Örnek", use_container_width=True):
+                st.session_state.ana_soru = random.choice(self.config['samples'])
+                st.rerun()
+        
+        # Query handling
+        if ara_btn and soru.strip():
+            self._handle_enhanced_query(soru)
+        elif ara_btn and not soru.strip():
+            st.markdown('<div class="warning-box">⚠️ <strong>Lütfen bir sigorta sorusu yazın.</strong></div>', unsafe_allow_html=True)
+    
+    def _handle_enhanced_query(self, soru: str):
+        """🎯 100 veri için gelişmiş sorgu işleme"""
+        with st.spinner("🤖 100+ belge analiz ediliyor..."):
+            result = st.session_state.sigorta_sistem.sorgula(soru)
+        
+        st.markdown("---")
+        
+        # Enhanced result display
+        if result['basarili']:
+            if result.get('cache_hit'):
+                st.markdown('<div class="info-box">⚡ <strong>Hızlı Yanıt!</strong> Cache\'den alındı.</div>', unsafe_allow_html=True)
+            else:
+                st.markdown('<div class="success-box">✅ <strong>100+ Belge Analizi Tamamlandı!</strong></div>', unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="warning-box">⚠️ <strong>Spesifik bilgi bulunamadı.</strong> Öneriler sunuluyor.</div>', unsafe_allow_html=True)
+        
+        # Yanıt göster
+        st.markdown(result['yanit'], unsafe_allow_html=True)
+        
+        # Enhanced analysis details
+        self._render_enhanced_analysis(result)
+    
+    def _render_enhanced_analysis(self, result: Dict):
+        """📊 100 veri analiz detayları"""
+        if not result.get('basarili'):
+            return
+        
+        st.markdown("---")
+        st.markdown("### 📊 100+ Belge Analiz Detayları")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.markdown(f"""
+            <div class="metric-card">
+                <strong>🎯 En İyi Skor:</strong> {result.get('en_iyi_skor', 0):.3f}<br>
+                <strong>📂 Kategori:</strong> {result.get('primary_category', 'N/A').title()}<br>
+                <strong>🎚️ Eşik:</strong> {result.get('kullanilan_esik', 0):.3f}
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown(f"""
+            <div class="metric-card">
+                <strong>📊 Toplam Sonuç:</strong> {result.get('toplam_sonuc', 0)}<br>
+                <strong>⭐ Kaliteli:</strong> {result.get('kaliteli_sonuc', 0)}<br>
+                <strong>⚡ Süre:</strong> {result.get('yanit_suresi', 0):.2f}s
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col3:
+            cache_status = "🟢 Cache Hit" if result.get('cache_hit') else "🔵 Fresh"
+            st.markdown(f"""
+            <div class="metric-card">
+                <strong>💾 Cache:</strong> {cache_status}<br>
+                <strong>🎯 Sistem:</strong> 100+ RAG<br>
+                <strong>📋 Mode:</strong> Enhanced
+            </div>
+            """, unsafe_allow_html=True)
+    
+    def render_footer(self):
+        """🎓 Footer"""
+        st.markdown("---")
+        
+        # Enhanced footer
+        st.markdown("""
+        <div style="text-align: center; background: linear-gradient(135deg, #1f4e79 0%, #2e5c8a 100%); 
+                   padding: 2rem; border-radius: 15px; color: white; margin: 2rem 0;">
+            <h3>🏢 Akıllı Sigorta Danışmanı v2.0</h3>
+            <p><strong>100+ Belge • Enhanced RAG • Gelişmiş Analiz</strong></p>
+            <div style="margin-top: 1rem;">
+                <span style="margin: 0 1rem;">🎯 100+ Veri</span>
+                <span style="margin: 0 1rem;">⚡ Hızlı Yanıt</span>
+                <span style="margin: 0 1rem;">🎨 Enhanced UI</span>
+                <span style="margin: 0 1rem;">📊 Analytics</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+def main():
+    """🎯 100 veri ana uygulama"""
+    ui = SigortaUserInterface()
+    ui.setup_page()
+    ui.render_header()
+    ui.render_sidebar()  # render_enhanced_sidebar yerine render_sidebar
+    ui.render_main_interface()
     ui.render_footer()
 
 if __name__ == "__main__":
