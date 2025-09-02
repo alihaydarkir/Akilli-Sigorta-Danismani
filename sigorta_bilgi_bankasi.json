@@ -1,0 +1,146 @@
+[
+  {
+    "id": "kasko_001",
+    "icerik": "1. Adım: Kasko poliçesi genel şartlarının 5. maddesine göre deprem hasarları ek teminat kapsamında karşılanır. 2. Adım: Poliçenizde 'Doğal Afetler Ek Teminatı' seçeneğinin aktif olup olmadığını kontrol edin. 3. Adım: Hasar sonrası 5 iş günü içinde şirkete bildirim yapın. 4. Adım: Ekspertiz raporu ve gerekli belgeler toplanmalıdır.",
+    "kategori": "kasko",
+    "alt_kategori": "dogal_afet",
+    "acillik_seviyesi": "yuksek",
+    "guvenilirlik": 0.95,
+    "metadata": {
+      "kaynak": "SBM 2023/8 Genelgesi",
+      "police_maddesi": "Genel Şartlar Md. 5"
+    }
+  },
+  {
+    "id": "kasko_002", 
+    "icerik": "1. Adım: Sel hasarları kasko poliçesinde 'Su Baskını Teminatı' başlığı altında yer alır. 2. Adım: Araç su altında kaldıysa motoru çalıştırmayın. 3. Adım: Hemen sigorta şirketinizi arayarak hasar bildiriminde bulunun. 4. Adım: Aracı sürükletmeden önce şirket onayı alın. 5. Adım: Su seviyesi ve hasar fotoğraflarını çekin.",
+    "kategori": "kasko",
+    "alt_kategori": "su_hasari",
+    "acillik_seviyesi": "kritik",
+    "guvenilirlik": 0.98,
+    "metadata": {
+      "kaynak": "Kasko Genel Şartları",
+      "police_maddesi": "Ek Teminatlar Md. 3"
+    }
+  },
+  {
+    "id": "kasko_003",
+    "icerik": "1. Adım: Çarpışma hasarları kasko poliçesi ana teminatlar kapsamındadır. 2. Adım: Kaza sonrası güvenli alana çekin ve ikaz lambasını yakın. 3. Adım: Yaralı varsa 112'yi arayın. 4. Adım: Kaza tutanağı düzenleyin veya karşı tarafla anlaşmalı tutanak imzalayın. 5. Adım: 48 saat içinde sigorta şirketine bildirim yapın.",
+    "kategori": "kasko",
+    "alt_kategori": "carpma",
+    "acillik_seviyesi": "yuksek",
+    "guvenilirlik": 0.99,
+    "metadata": {
+      "kaynak": "Kasko Genel Şartları",
+      "police_maddesi": "Ana Teminatlar Md. 1"
+    }
+  },
+  {
+    "id": "saglik_001",
+    "icerik": "1. Adım: Sağlık sigortanız yurtdışında geçerlidir ancak 'Yurtdışı Tedavi Teminatı' eklenmiş olmalıdır. 2. Adım: Seyahat öncesi sigorta şirketinizden onay alın. 3. Adım: Acil durumda şirketin 7/24 yardım hattını arayın. 4. Adım: Tedavi masrafı belgelerini saklayın. 5. Adım: Türkiye'ye dönüş sonrası 30 gün içinde başvuru yapın.",
+    "kategori": "saglik",
+    "alt_kategori": "yurtdisi_tedavi",
+    "acillik_seviyesi": "orta",
+    "guvenilirlik": 0.92,
+    "metadata": {
+      "kaynak": "SBM 2022/12 Genelgesi",
+      "police_maddesi": "Ek Teminatlar Md. 8"
+    }
+  },
+  {
+    "id": "saglik_002",
+    "icerik": "1. Adım: Ameliyat öncesi sigorta şirketinizden ön onay alınmalıdır. 2. Adım: Doktor raporu ve ameliyat önerisi belgesini hazırlayın. 3. Adım: Şirketin anlaşmalı hastanelerinden birini tercih edin. 4. Adım: Ameliyat sonrası taburcu raporu ve fatura belgesini alın. 5. Adım: Tazminat başvurusunu 15 gün içinde yapın.",
+    "kategori": "saglik",
+    "alt_kategori": "ameliyat",
+    "acillik_seviyesi": "yuksek",
+    "guvenilirlik": 0.96,
+    "metadata": {
+      "kaynak": "Sağlık Sigortası Genel Şartları",
+      "police_maddesi": "Ana Teminatlar Md. 4"
+    }
+  },
+  {
+    "id": "konut_001",
+    "icerik": "1. Adım: Yangın hasarları konut sigortası ana teminatlar kapsamındadır ve tam kapsam sağlar. 2. Adım: Yangın sonrası hemen itfaiyeyi (110) arayın. 3. Adım: Güvenlik sağlandıktan sonra sigorta şirketinize bildirim yapın. 4. Adım: İtfaiye raporu alın. 5. Adım: Hasar tespit için ekspertiz randevusu ayarlayın. 6. Adım: Zarar gören eşyaların listesini çıkarın.",
+    "kategori": "konut",
+    "alt_kategori": "yangin",
+    "acillik_seviyesi": "kritik",
+    "guvenilirlik": 0.98,
+    "metadata": {
+      "kaynak": "Konut Sigortası Genel Şartları",
+      "police_maddesi": "Ana Teminatlar Md. 1"
+    }
+  },
+  {
+    "id": "konut_002",
+    "icerik": "1. Adım: Hırsızlık hasarları 'Eşya Sigortası' teminatı kapsamında karşılanır. 2. Adım: Hırsızlık sonrası derhal polise (155) haber verin. 3. Adım: Polis raporu alın. 4. Adım: Çalınan eşyaların listesini ve varsa fatura/fotoğraflarını hazırlayın. 5. Adım: 48 saat içinde sigorta şirketine bildirim yapın.",
+    "kategori": "konut",
+    "alt_kategori": "hirsizlik", 
+    "acillik_seviyesi": "yuksek",
+    "guvenilirlik": 0.93,
+    "metadata": {
+      "kaynak": "Konut Sigortası Genel Şartları",
+      "police_maddesi": "Ek Teminatlar Md. 6"
+    }
+  },
+  {
+    "id": "trafik_001",
+    "icerik": "1. Adım: Trafik sigortası temerrüt faizi günlük olarak hesaplanır ve yıllık %24 oranındadır. 2. Adım: Prim ödemesi 30 gün gecikirse faiz işletilmeye başlar. 3. Adım: Geciken prim tutarı üzerinden günlük faiz hesaplanır. 4. Adım: Toplam borç 90 günü geçerse poliçe feshedilir.",
+    "kategori": "trafik",
+    "alt_kategori": "temerrut_faizi",
+    "acillik_seviyesi": "orta",
+    "guvenilirlik": 0.97,
+    "metadata": {
+      "kaynak": "SBM 2023/22 Tebliği",
+      "police_maddesi": "Finansal Şartlar Md. 8"
+    }
+  },
+  {
+    "id": "trafik_002",
+    "icerik": "1. Adım: Trafik sigortası ile karşı tarafa verilen maddi ve manevi zararlar karşılanır. 2. Adım: Kaza sonrası polise haber verin ve tutanak düzenleyin. 3. Adım: Sigorta şirketinize 5 iş günü içinde bildirim yapın. 4. Adım: Karşı taraf tazminat talebinde bulunursa şirket karşılar.",
+    "kategori": "trafik", 
+    "alt_kategori": "sorumluluk",
+    "acillik_seviyesi": "yuksek",
+    "guvenilirlik": 0.99,
+    "metadata": {
+      "kaynak": "Trafik Sigortası Kanunu",
+      "police_maddesi": "Ana Madde 1"
+    }
+  },
+  {
+    "id": "genel_001",
+    "icerik": "1. Adım: Tüm sigorta poliçelerinde 14 günlük cayma hakkı bulunmaktadır. 2. Adım: Cayma hakkı poliçe imzalandığı tarihten itibaren başlar. 3. Adım: Cayma dilekçesi yazılı olarak sunulmalıdır. 4. Adım: Bu süre içinde hiçbir neden göstermeden cayabilirsiniz. 5. Adım: Ödenen primler 15 gün içinde iade edilir.",
+    "kategori": "genel",
+    "alt_kategori": "cayma_hakki",
+    "acillik_seviyesi": "orta",
+    "guvenilirlik": 0.98,
+    "metadata": {
+      "kaynak": "Sigortacılık Kanunu Md. 15",
+      "police_maddesi": "Cayma Hakkı Md. 1"
+    }
+  },
+  {
+    "id": "genel_002",
+    "icerik": "1. Adım: Franchise tutarı poliçe başlangıcında belirlenen sabit tutardır. 2. Adım: Her hasar için bu tutar sizin tarafınızdan karşılanır. 3. Adım: Franchise tutarı hasar tutarından düşülerek kalan kısım ödenir. 4. Adım: Franchise oransal veya sabit tutar olarak belirlenebilir. 5. Adım: Daha yüksek franchise seçimi prim indirim sağlar.",
+    "kategori": "genel",
+    "alt_kategori": "franchise",
+    "acillik_seviyesi": "orta",
+    "guvenilirlik": 0.94,
+    "metadata": {
+      "kaynak": "Sigorta Genel Şartları",
+      "police_maddesi": "Finansal Şartlar Md. 3"
+    }
+  },
+  {
+    "id": "genel_003",
+    "icerik": "1. Adım: Poliçe yenileme 30 gün önceden müşteriye bildirilmelidir. 2. Adım: Yenileme teklifinde prim ve teminat değişiklikleri açıklanmalıdır. 3. Adım: Müşteri yenilemeyi kabul etmezse poliçe sona erer. 4. Adım: Otomatik yenileme klauzülü varsa açıkça belirtilmelidir. 5. Adım: Yenileme sırasında risk değerlendirmesi yapılabilir.",
+    "kategori": "genel",
+    "alt_kategori": "yenileme",
+    "acillik_seviyesi": "orta",
+    "guvenilirlik": 0.91,
+    "metadata": {
+      "kaynak": "SBM 2024/5 Genelgesi",
+      "police_maddesi": "Yenileme Şartları Md. 7"
+    }
+  }
+]
