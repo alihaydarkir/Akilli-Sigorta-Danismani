@@ -1,6 +1,10 @@
-# requirements.txt - Akıllı Sigorta Danışmanı
-streamlit>=1.32.0
-sentence-transformers>=2.6.0
-chromadb>=0.4.0
-numpy>=1.24.0
-plotly>=5.17.0
+streamlit==1.28.1
+sentence-transformers==2.2.2
+chromadb==0.4.15
+plotly==5.17.0
+numpy==1.24.3
+pandas==2.0.3
+torch==2.1.0
+transformers==4.35.0
+onnxruntime==1.16.0
+pydantic==1.10.13
